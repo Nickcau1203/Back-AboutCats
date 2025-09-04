@@ -1,0 +1,9 @@
+-- CreateTable
+CREATE TABLE "gatos" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "raça" TEXT NOT NULL,
+    "diferenças" TEXT NOT NULL,
+    "tempoDeVida" INTEGER NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
