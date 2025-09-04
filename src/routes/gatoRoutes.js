@@ -1,22 +1,22 @@
 import express from "express";
-import AnimeController from "../controllers/animeController.js";
+import GatoController from "../controllers/gatoController.js";
 
-const animesRouter = express.Router();
+const gatoRouter = express.Router();
 
-// Rotas de Animes
-// GET /api/animes - Listar todos os animes
-animesRouter.get("/", AnimeController.getAllAnimes);
+// Rotas de Gatos
+// GET /gatos - Listar todos os Gatos
+gatoRouter.get("/", GatoController.getAllGatos);
 
-// GET /api/animes/:id - Obter um anime pelo ID
-animesRouter.get("/:id", AnimeController.getAnimeById);
+// GET /gatos/:id - Obter um Gato pelo ID
+gatoRouter.get("/:id", GatoController.getGatoById);
 
-// POST /api/animes - Criar um novo anime
-animesRouter.post("/", AnimeController.createAnime);
+// POST /gatos - Criar um novo Gato
+gatoRouter.post("/", GatoController.createGato);
 
-// PUT /api/animes/:id - Atualizar um anime
-animesRouter.put("/:id", AnimeController.updateAnime);
+// PUT /gatos/:id - Atualizar um Gato
+gatoRouter.put("/:id", GatoController.updateGato);
 
-// DELETE /api/animes/:id - Remover um anime
-animesRouter.delete("/:id", AnimeController.deleteAnime);
+// DELETE /gatos/:id - Remover um Gato
+gatoRouter.delete("/:id", GatoController.deleteGato);
 
-export default animesRouter;
+export default gatoRouter;
