@@ -1,147 +1,90 @@
-import AnimeModel from "../models/animeModel.js";
+import GatoModel from "../models/gatoModel.js";
 
-class AnimeController {
-  // GET /api/animes
-  async getAllAnimes(req, res) {
+class GatoController {
+  // GET /api/gatos
+  async getAllGatos(req, res) {
     try {
-      const animes = await AnimeModel.findAll();
-      res.json(animes);
+      const gatos = await GatoModel.findAll();
+      res.json(gatos);
     } catch (error) {
-      console.error("Erro ao buscar animes:", error);
-      res.status(500).json({ error: "Erro ao buscar animes" });
+      console.error("Erro ao buscar gatos:", error);
+      res.status(500).json({ error: "Erro ao buscar gatos" });
     }
   }
 
-  // GET /api/animes/:id
-  async getAnimeById(req, res) {
+  // GET /api/gatos/:id
+  async getGatoById(req, res) {
     try {
       const { id } = req.params;
 
-      const anime = await AnimeModel.findById(id);
+      const gato = await GatoModel.findById(id);
 
-      if (!anime) {
-        return res.status(404).json({ error: "Anime não encontrado" });
+      if (!gato) {
+        return res.status(404).json({ error: "Gato não encontrado" });
       }
 
-      res.json(anime);
+      res.json(gato);
     } catch (error) {
-      console.error("Erro ao buscar anime:", error);
-      res.status(500).json({ error: "Erro ao buscar anime" });
+      console.error("Erro ao buscar gato:", error);
+      res.status(500).json({ error: "Erro ao buscar gato" });
     }
   }
 
-  // POST /api/animes
-  async createAnime(req, res) {
+  // POST /api/gatos
+  async createGato(req, res) {
     try {
-      // Validação básica
-      const {
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl,
-      } = req.body;
+      const { raça, diferenças, tempoDeVida } = req.body;
 
-      // Verifica se o título do anime foi fornecido
-
-      if (
-        !title ||
-        !description ||
-        !episodes ||
-        !releaseYear ||
-        !studio ||
-        !genres ||
-        !rating ||
-        !imageUrl
-      ) {
-        return res
-          .status(400)
-          .json({ error: "Todos os campos são obrigatórios" });
+      // Verifica se todos os campos obrigatórios foram fornecidos
+      if (!raça || !diferenças || !tempoDeVida) {
+        return res.status(400).json({ error: "Todos os campos são obrigatórios" });
       }
 
-      // Criar o novo anime
-      const newAnime = await AnimeModel.create(
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl
-      );
+      const newGato = await GatoModel.create(raça, diferenças, tempoDeVida);
 
-      if (!newAnime) {
-        return res.status(400).json({ error: "Erro ao criar anime" });
-      }
-
-      res.status(201).json(newAnime);
+      res.status(201).json(newGato);
     } catch (error) {
-      console.error("Erro ao criar anime:", error);
-      res.status(500).json({ error: "Erro ao criar anime" });
+      console.error("Erro ao criar gato:", error);
+      res.status(500).json({ error: "Erro ao criar gato" });
     }
   }
 
-  // PUT /api/animes/:id
-  async updateAnime(req, res) {
+  // PUT /api/gatos/:id
+  async updateGato(req, res) {
     try {
       const { id } = req.params;
-      const {
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl,
-      } = req.body;
+      const { raça, diferenças, tempoDeVida } = req.body;
 
-      // Atualizar o anime
-      const updatedAnime = await AnimeModel.update(
-        id,
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl
-      );
+      const updatedGato = await GatoModel.update(id, raça, diferenças, tempoDeVida);
 
-      if (!updatedAnime) {
-        return res.status(404).json({ error: "Anime não encontrado" });
+      if (!updatedGato) {
+        return res.status(404).json({ error: "Gato não encontrado" });
       }
 
-      res.json(updatedAnime);
+      res.json(updatedGato);
     } catch (error) {
-      console.error("Erro ao atualizar anime:", error);
-      res.status(500).json({ error: "Erro ao atualizar anime" });
+      console.error("Erro ao atualizar gato:", error);
+      res.status(500).json({ error: "Erro ao atualizar gato" });
     }
   }
 
-  // DELETE /api/animes/:id
-  async deleteAnime(req, res) {
+  // DELETE /api/gatos/:id
+  async deleteGato(req, res) {
     try {
       const { id } = req.params;
 
-      // Remover o anime
-      const result = await AnimeModel.delete(id);
+      const result = await GatoModel.delete(id);
 
       if (!result) {
-        return res.status(404).json({ error: "Anime não encontrado" });
+        return res.status(404).json({ error: "Gato não encontrado" });
       }
 
       res.status(204).end(); // Resposta sem conteúdo
     } catch (error) {
-      console.error("Erro ao remover anime:", error);
-      res.status(500).json({ error: "Erro ao remover anime" });
+      console.error("Erro ao remover gato:", error);
+      res.status(500).json({ error: "Erro ao remover gato" });
     }
   }
 }
 
-export default new AnimeController();
+export default new GatoController();
