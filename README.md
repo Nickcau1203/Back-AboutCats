@@ -1,6 +1,6 @@
-# Tutorial: Criando um Backend Node.js para Gerenciamento de Animes
+# Tutorial: Criando um Backend Node.js para Gerenciamento de Raças de Gato
 
-Este tutorial vai te guiar na criação de uma API REST para gerenciar uma coleção de animes, utilizando Node.js com Express. Vamos construir um CRUD completo seguindo uma arquitetura organizada com routes, controllers e models, usando um array em memória para armazenar os dados.
+Este tutorial vai te guiar na criação de uma API REST para gerenciar uma coleção de raças de gatos, utilizando Node.js com Express. Vamos construir um CRUD completo seguindo uma arquitetura organizada com routes, controllers e models, usando um array em memória para armazenar os dados.
 
 ## Capacidades Técnicas Trabalhadas
 
@@ -23,8 +23,8 @@ Este tutorial vai te guiar na criação de uma API REST para gerenciar uma cole�
 Crie uma pasta para o projeto e inicialize:
 
 ```bash
-mkdir animes-api
-cd animes-api
+mkdir racas-gato-api
+cd racas-gato-api
 npm init
 ```
 
@@ -40,12 +40,12 @@ Modifique o arquivo `package.json` para incluir os scripts:
 
 ```json
 {
-  "name": "animes-api",
+  "name": "racas-gato-api",
   "version": "1.0.0",
-  "description": "Projeto base de uma API com MVC",
-  "keywords": ["nodejs", "javascript", "prisma"],
+  "description": "API para gerenciamento de raças de gatos",
+  "keywords": ["nodejs", "javascript", "express"],
   "license": "MIT",
-  "author": "Felipe Dev",
+  "author": "Nicole Cau",
   "type": "module",
   "main": "src/server.js",
   "scripts": {
@@ -85,331 +85,224 @@ Crie o arquivo `src/server.js`:
 import express from "express";
 import { config } from "dotenv";
 
-config(); // Carrega variáveis de ambiente do arquivo .env
+config();
 const port = process.env.PORT || 3000;
 
-// Inicializa o Express
 const app = express();
 
-app.use(express.json()); // Parse de JSON
+app.use(express.json());
 
-// Rota base para verificar se o servidor está rodando
 app.get("/", (req, res) => {
-  res.json({ message: "API de Coleção de Animes funcionando!" });
+  res.json({ message: "API de Raças de Gato funcionando!" });
 });
 
-// Iniciar o servidor
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
 });
 ```
 
-### Passo 7: Criar o modelo Anime (usando array em memória)
+### Passo 7: Criar o modelo Raca (usando array em memória)
 
-Crie o arquivo `src/models/animeModel.js`:
+Crie o arquivo `src/models/racaModel.js`:
 
 ```javascript
-// Array para armazenar os animes em memória
-let animes = [
+// Array para armazenar as raças em memória
+let racas = [
   {
     id: 1,
-    title: "Attack on Titan",
-    description: "Humanidade lutando contra titãs em um mundo pós-apocalíptico",
-    episodes: 75,
-    releaseYear: 2013,
-    studio: "MAPPA",
-    genres: "Ação,Drama,Fantasia",
-    rating: 4.8,
-    imageUrl: "https://example.com/aot.jpg",
+    nome: "Siamês",
+    origem: "Tailândia",
+    expectativaDeVida: "12-15 anos",
+    descricao: "Raça elegante, de olhos azuis e personalidade vocal.",
+    pelagem: "Curta",
+    corPadrao: "Seal point",
+    imagemUrl: "https://example.com/siames.jpg",
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
     id: 2,
-    title: "My Hero Academia",
-    description:
-      "Em um mundo onde quase todos possuem superpoderes, um garoto sem poderes luta para se tornar um herói",
-    episodes: 113,
-    releaseYear: 2016,
-    studio: "Bones",
-    genres: "Ação,Comédia,Super-heróis",
-    rating: 4.6,
-    imageUrl: "https://example.com/mha.jpg",
+    nome: "Maine Coon",
+    origem: "Estados Unidos",
+    expectativaDeVida: "10-13 anos",
+    descricao: "Uma das maiores raças, dócil e peluda.",
+    pelagem: "Longa",
+    corPadrao: "Marrom rajado",
+    imagemUrl: "https://example.com/mainecoon.jpg",
     createdAt: new Date(),
     updatedAt: new Date(),
   },
 ];
 
-// Variável para controlar o próximo ID
 let nextId = 3;
 
-class AnimeModel {
-  // Obter todos os animes
+class RacaModel {
   findAll() {
-    return animes;
+    return racas;
   }
 
-  // Obter um anime pelo ID
   findById(id) {
-    return animes.find((anime) => anime.id === Number(id)) || null;
+    return racas.find((raca) => raca.id === Number(id)) || null;
   }
 
-  // Criar um novo anime
-  create(
-    title,
-    description,
-    episodes,
-    releaseYear,
-    studio,
-    genres,
-    rating,
-    imageUrl
-  ) {
-    const newAnime = {
+  create(nome, origem, expectativaDeVida, descricao, pelagem, corPadrao, imagemUrl) {
+    const newRaca = {
       id: nextId++,
-      title,
-      description,
-      episodes,
-      releaseYear,
-      studio,
-      genres,
-      rating,
-      imageUrl,
+      nome,
+      origem,
+      expectativaDeVida,
+      descricao,
+      pelagem,
+      corPadrao,
+      imagemUrl,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-
-    animes.push(newAnime);
-    return newAnime;
+    racas.push(newRaca);
+    return newRaca;
   }
 
-  // Atualizar um anime
-  update(
-    id,
-    title,
-    description,
-    episodes,
-    releaseYear,
-    studio,
-    genres,
-    rating,
-    imageUrl
-  ) {
-    const anime = this.findById(id);
+  update(id, nome, origem, expectativaDeVida, descricao, pelagem, corPadrao, imagemUrl) {
+    const raca = this.findById(id);
+    if (!raca) return null;
 
-    if (!anime) {
-      return null;
-    }
+    raca.nome = nome || raca.nome;
+    raca.origem = origem || raca.origem;
+    raca.expectativaDeVida = expectativaDeVida || raca.expectativaDeVida;
+    raca.descricao = descricao || raca.descricao;
+    raca.pelagem = pelagem || raca.pelagem;
+    raca.corPadrao = corPadrao || raca.corPadrao;
+    raca.imagemUrl = imagemUrl || raca.imagemUrl;
+    raca.updatedAt = new Date();
 
-    // Atualize o anime existente com os novos dados
-    anime.title = title || anime.title;
-    anime.description = description || anime.description;
-    anime.episodes = episodes || anime.episodes;
-    anime.releaseYear = releaseYear || anime.releaseYear;
-    anime.studio = studio || anime.studio;
-    anime.genres = genres || anime.genres;
-    anime.rating = rating || anime.rating;
-    anime.imageUrl = imageUrl || anime.imageUrl;
-    anime.updatedAt = new Date(); // Atualiza a data de modificação
-
-    return anime;
+    return raca;
   }
 
-  // Remover um anime
   delete(id) {
-    const anime = this.findById(id);
-    if (!anime) {
-      return null;
-    }
-
-    // Filtra o anime a ser removido
-    animes = animes.filter((anime) => anime.id !== Number(id));
-
+    const raca = this.findById(id);
+    if (!raca) return null;
+    racas = racas.filter((raca) => raca.id !== Number(id));
     return true;
   }
 }
 
-export default new AnimeModel();
+export default new RacaModel();
 ```
 
-### Passo 8: Criar o controlador de Animes
+### Passo 8: Criar o controlador de Raças
 
-Crie o arquivo `src/controllers/animeController.js`:
+Crie o arquivo `src/controllers/racaController.js`:
 
 ```javascript
-import AnimeModel from "../models/animeModel.js";
+import RacaModel from "../models/racaModel.js";
 
-class AnimeController {
-  // GET /api/animes
-  getAllAnimes(req, res) {
+class RacaController {
+  getAllRacas(req, res) {
     try {
-      const animes = AnimeModel.findAll();
-      res.json(animes);
+      const racas = RacaModel.findAll();
+      res.json(racas);
     } catch (error) {
-      console.error("Erro ao buscar animes:", error);
-      res.status(500).json({ error: "Erro ao buscar animes" });
+      res.status(500).json({ error: "Erro ao buscar raças" });
     }
   }
 
-  // GET /api/animes/:id
-  getAnimeById(req, res) {
+  getRacaById(req, res) {
     try {
       const { id } = req.params;
-
-      const anime = AnimeModel.findById(id);
-
-      if (!anime) {
-        return res.status(404).json({ error: "Anime não encontrado" });
+      const raca = RacaModel.findById(id);
+      if (!raca) {
+        return res.status(404).json({ error: "Raça não encontrada" });
       }
-
-      res.json(anime);
+      res.json(raca);
     } catch (error) {
-      console.error("Erro ao buscar anime:", error);
-      res.status(500).json({ error: "Erro ao buscar anime" });
+      res.status(500).json({ error: "Erro ao buscar raça" });
     }
   }
 
-  // POST /api/animes
-  createAnime(req, res) {
+  createRaca(req, res) {
     try {
-      // Validação básica
-      const {
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl,
-      } = req.body;
-
-      // Verifica se o título do anime foi fornecido
+      const { nome, origem, expectativaDeVida, descricao, pelagem, corPadrao, imagemUrl } = req.body;
       if (
-        !title ||
-        !description ||
-        !episodes ||
-        !releaseYear ||
-        !studio ||
-        !genres ||
-        !rating ||
-        !imageUrl
+        !nome ||
+        !origem ||
+        !expectativaDeVida ||
+        !descricao ||
+        !pelagem ||
+        !corPadrao ||
+        !imagemUrl
       ) {
-        return res
-          .status(400)
-          .json({ error: "Todos os campos são obrigatórios" });
+        return res.status(400).json({ error: "Todos os campos são obrigatórios" });
       }
-
-      // Criar o novo anime
-      const newAnime = AnimeModel.create(
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl
+      const newRaca = RacaModel.create(
+        nome,
+        origem,
+        expectativaDeVida,
+        descricao,
+        pelagem,
+        corPadrao,
+        imagemUrl
       );
-
-      if (!newAnime) {
-        return res.status(400).json({ error: "Erro ao criar anime" });
-      }
-
-      res.status(201).json(newAnime);
+      res.status(201).json(newRaca);
     } catch (error) {
-      console.error("Erro ao criar anime:", error);
-      res.status(500).json({ error: "Erro ao criar anime" });
+      res.status(500).json({ error: "Erro ao criar raça" });
     }
   }
 
-  // PUT /api/animes/:id
-  updateAnime(req, res) {
+  updateRaca(req, res) {
     try {
       const { id } = req.params;
-      const {
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl,
-      } = req.body;
-
-      // Atualizar o anime
-      const updatedAnime = AnimeModel.update(
+      const { nome, origem, expectativaDeVida, descricao, pelagem, corPadrao, imagemUrl } = req.body;
+      const updatedRaca = RacaModel.update(
         id,
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl
+        nome,
+        origem,
+        expectativaDeVida,
+        descricao,
+        pelagem,
+        corPadrao,
+        imagemUrl
       );
-
-      if (!updatedAnime) {
-        return res.status(404).json({ error: "Anime não encontrado" });
+      if (!updatedRaca) {
+        return res.status(404).json({ error: "Raça não encontrada" });
       }
-
-      res.json(updatedAnime);
+      res.json(updatedRaca);
     } catch (error) {
-      console.error("Erro ao atualizar anime:", error);
-      res.status(500).json({ error: "Erro ao atualizar anime" });
+      res.status(500).json({ error: "Erro ao atualizar raça" });
     }
   }
 
-  // DELETE /api/animes/:id
-  deleteAnime(req, res) {
+  deleteRaca(req, res) {
     try {
       const { id } = req.params;
-
-      // Remover o anime
-      const result = AnimeModel.delete(id);
-
+      const result = RacaModel.delete(id);
       if (!result) {
-        return res.status(404).json({ error: "Anime não encontrado" });
+        return res.status(404).json({ error: "Raça não encontrada" });
       }
-
-      res.status(204).end(); // Resposta sem conteúdo
+      res.status(204).end();
     } catch (error) {
-      console.error("Erro ao remover anime:", error);
-      res.status(500).json({ error: "Erro ao remover anime" });
+      res.status(500).json({ error: "Erro ao remover raça" });
     }
   }
 }
 
-export default new AnimeController();
+export default new RacaController();
 ```
 
 ### Passo 9: Criar as rotas
 
-Crie o arquivo `src/routes/animeRoutes.js`:
+Crie o arquivo `src/routes/racaRoutes.js`:
 
 ```javascript
 import express from "express";
-import AnimeController from "../controllers/animeController.js";
+import RacaController from "../controllers/racaController.js";
 
 const router = express.Router();
 
-// Rotas de Animes
-// GET /api/animes - Listar todos os animes
-router.get("/", AnimeController.getAllAnimes);
-
-// GET /api/animes/:id - Obter um anime pelo ID
-router.get("/:id", AnimeController.getAnimeById);
-
-// POST /api/animes - Criar um novo anime
-router.post("/", AnimeController.createAnime);
-
-// PUT /api/animes/:id - Atualizar um anime
-router.put("/:id", AnimeController.updateAnime);
-
-// DELETE /api/animes/:id - Remover um anime
-router.delete("/:id", AnimeController.deleteAnime);
+router.get("/", RacaController.getAllRacas);
+router.get("/:id", RacaController.getRacaById);
+router.post("/", RacaController.createRaca);
+router.put("/:id", RacaController.updateRaca);
+router.delete("/:id", RacaController.deleteRaca);
 
 export default router;
 ```
@@ -424,498 +317,44 @@ npm run dev
 
 Agora você pode testar o CRUD completo usando ferramentas como Postman, Insomnia ou Thunder Client:
 
-### 1. Criar um anime (POST /api/animes)
+### 1. Criar uma raça (POST /api/racas)
 
 ```json
 {
-  "title": "Naruto Shippuden",
-  "description": "Naruto Uzumaki retorna após três anos de treinamento para enfrentar a Akatsuki",
-  "episodes": 500,
-  "releaseYear": 2007,
-  "studio": "Pierrot",
-  "genres": "Ação,Aventura,Comédia,Shounen",
-  "rating": 4.8,
-  "imageUrl": "https://example.com/naruto.jpg"
+  "nome": "Persa",
+  "origem": "Irã",
+  "expectativaDeVida": "12-17 anos",
+  "descricao": "Gato de pelagem longa, dócil e tranquilo.",
+  "pelagem": "Longa",
+  "corPadrao": "Branco",
+  "imagemUrl": "https://example.com/persa.jpg"
 }
 ```
 
-### 2. Listar todos os animes (GET /api/animes)
+### 2. Listar todas as raças (GET /api/racas)
 
-### 3. Obter um anime específico (GET /api/animes/:id)
+### 3. Obter uma raça específica (GET /api/racas/:id)
 
-### 4. Atualizar um anime (PUT /api/animes/:id)
+### 4. Atualizar uma raça (PUT /api/racas/:id)
 
 ```json
 {
-  "episodes": 502,
-  "rating": 4.9
+  "descricao": "Gato de pelagem longa, dócil, tranquilo e muito popular."
 }
 ```
 
-### 5. Remover um anime (DELETE /api/animes/:id)
+### 5. Remover uma raça (DELETE /api/racas/:id)
 
 ## Explicação do Projeto
 
-Neste projeto, seguimos algumas boas práticas de desenvolvimento:
-
-1. **Arquitetura MVC (Model-View-Controller)**:
-
-   - Models: Encapsulam a lógica de acesso aos dados (em memória nesse caso)
-   - Controllers: Gerenciam a lógica de negócios
-   - (Sem Views, pois é uma API)
-
-2. **Organização de código**:
-
-   - Estrutura de pastas bem definida
-   - Separação de responsabilidades
-   - Código modular e reutilizável
-
-3. **Armazenamento em memória**:
-
-   - Utilização de arrays para armazenar dados temporários
-   - Gestão de IDs para garantir unicidade
-   - Simulação de operações assíncronas (async/await) para facilitar expansão futura
-
-4. **Tratamento de erros**:
-
-   - Try/catch blocks para lidar com exceções
-   - Respostas de erro padronizadas
-
-5. **Validação de dados**:
-   - Validação básica implementada nos controllers
-   - Pode ser aprimorada com bibliotecas como Joi ou Zod
-
-## Adaptando o Projeto para Usar o Prisma ORM
-
-Vamos transformar nosso projeto para utilizar o Prisma ORM para persistência de dados em um banco de dados real, ao invés de usar o armazenamento em memória.
-
-### Passo 1: Instalar o Prisma
-
-```bash
-# Instalar o Prisma CLI e o cliente Prisma
-npm install prisma @prisma/client
-```
-
-### Passo 2: Inicializar o Prisma
-
-```bash
-npx prisma init
-```
-
-Este comando cria:
-
-- Uma pasta `prisma` com um arquivo `schema.prisma`
-- Um arquivo `.env` para configuração da conexão com o banco de dados
-
-### Passo 3: Configurar o banco de dados
-
-Edite o arquivo `.env` para adicionar a URL de conexão com o banco de dados:
-
-```env
-PORT=4000
-
-# Para SQLite
-DATABASE_URL="file:./dev.db"
-
-# Ou Para PostgreSQL
-# DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/animes?schema=public"
-```
-
-Neste exemplo, estamos usando SQLite para facilitar o desenvolvimento, mas em um ambiente de produção, você provavelmente usaria PostgreSQL, MySQL ou MongoDB.
-
-### Passo 4: Definir o modelo no Prisma
-
-Edite o arquivo `prisma/schema.prisma`:
-
-```prisma
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-
-model Anime {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
-  episodes    Int
-  releaseYear Int
-  studio      String
-  genres      String
-  rating      Float
-  imageUrl    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-```
-
-### Passo 5: Criar a instância do cliente Prisma
-
-Crie o arquivo `prisma/prisma.js`:
-
-```javascript
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-export default prisma;
-```
-
-### Passo 6: Executar a migração do banco de dados
-
-```bash
-npx prisma migrate dev
-```
-
-### Passo 7: Adaptar o modelo Anime
-
-Substitua o código do arquivo `src/models/animeModel.js` pelo seguinte:
-
-```javascript
-import prisma from "../../prisma/prisma.js";
-
-class AnimeModel {
-  // Obter todos os animes
-  async findAll() {
-    const animes = await prisma.anime.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    console.log(animes);
-
-    return animes;
-  }
-
-  // Obter um anime pelo ID
-  async findById(id) {
-    const anime = await prisma.anime.findUnique({
-      where: {
-        id: Number(id),
-      },
-    });
-
-    return anime;
-  }
-
-  // Criar um novo anime
-  async create(
-    title,
-    description,
-    episodes,
-    releaseYear,
-    studio,
-    genres,
-    rating,
-    imageUrl
-  ) {
-    const newAnime = await prisma.anime.create({
-      data: {
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl,
-      },
-    });
-
-    return newAnime;
-  }
-
-  // Atualizar um anime
-  async update(
-    id,
-    title,
-    description,
-    episodes,
-    releaseYear,
-    studio,
-    genres,
-    rating,
-    imageUrl
-  ) {
-    const anime = await this.findById(id);
-
-    if (!anime) {
-      return null;
-    }
-
-    // Atualize o anime existente com os novos dados
-    const data = {};
-    if (title !== undefined) {
-      data.title = title;
-    }
-    if (description !== undefined) {
-      data.description = description;
-    }
-    if (episodes !== undefined) {
-      data.episodes = episodes;
-    }
-    if (releaseYear !== undefined) {
-      data.releaseYear = releaseYear;
-    }
-    if (studio !== undefined) {
-      data.studio = studio;
-    }
-    if (genres !== undefined) {
-      data.genres = genres;
-    }
-    if (rating !== undefined) {
-      data.rating = rating;
-    }
-    if (imageUrl !== undefined) {
-      data.imageUrl = imageUrl;
-    }
-
-    const animeUpdated = await prisma.anime.update({
-      where: {
-        id: Number(id),
-      },
-      data,
-    });
-
-    return animeUpdated;
-  }
-
-  // Remover um anime
-  async delete(id) {
-    const anime = await this.findById(id);
-
-    if (!anime) {
-      return null;
-    }
-
-    await prisma.anime.delete({
-      where: {
-        id: Number(id),
-      },
-    });
-
-    return true;
-  }
-}
-
-export default new AnimeModel();
-```
-
-### Passo 8: Adaptar o controller para trabalhar com operações assíncronas
-
-Modifique o arquivo `src/controllers/animeController.js` para trabalhar com as operações assíncronas do Prisma:
-
-```javascript
-import AnimeModel from "../models/animeModel.js";
-
-class AnimeController {
-  // GET /api/animes
-  async getAllAnimes(req, res) {
-    try {
-      const animes = await AnimeModel.findAll();
-      res.json(animes);
-    } catch (error) {
-      console.error("Erro ao buscar animes:", error);
-      res.status(500).json({ error: "Erro ao buscar animes" });
-    }
-  }
-
-  // GET /api/animes/:id
-  async getAnimeById(req, res) {
-    try {
-      const { id } = req.params;
-
-      const anime = await AnimeModel.findById(id);
-
-      if (!anime) {
-        return res.status(404).json({ error: "Anime não encontrado" });
-      }
-
-      res.json(anime);
-    } catch (error) {
-      console.error("Erro ao buscar anime:", error);
-      res.status(500).json({ error: "Erro ao buscar anime" });
-    }
-  }
-
-  // POST /api/animes
-  async createAnime(req, res) {
-    try {
-      // Validação básica
-      const {
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl,
-      } = req.body;
-
-      // Verifica se o título do anime foi fornecido
-      if (
-        !title ||
-        !description ||
-        !episodes ||
-        !releaseYear ||
-        !studio ||
-        !genres ||
-        !rating ||
-        !imageUrl
-      ) {
-        return res
-          .status(400)
-          .json({ error: "Todos os campos são obrigatórios" });
-      }
-
-      // Criar o novo anime
-      const newAnime = await AnimeModel.create(
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl
-      );
-
-      if (!newAnime) {
-        return res.status(400).json({ error: "Erro ao criar anime" });
-      }
-
-      res.status(201).json(newAnime);
-    } catch (error) {
-      console.error("Erro ao criar anime:", error);
-      res.status(500).json({ error: "Erro ao criar anime" });
-    }
-  }
-
-  // PUT /api/animes/:id
-  async updateAnime(req, res) {
-    try {
-      const { id } = req.params;
-      const {
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl,
-      } = req.body;
-
-      // Atualizar o anime
-      const updatedAnime = await AnimeModel.update(
-        id,
-        title,
-        description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl
-      );
-
-      if (!updatedAnime) {
-        return res.status(404).json({ error: "Anime não encontrado" });
-      }
-
-      res.json(updatedAnime);
-    } catch (error) {
-      console.error("Erro ao atualizar anime:", error);
-      res.status(500).json({ error: "Erro ao atualizar anime" });
-    }
-  }
-
-  // DELETE /api/animes/:id
-  async deleteAnime(req, res) {
-    try {
-      const { id } = req.params;
-
-      // Remover o anime
-      const result = await AnimeModel.delete(id);
-
-      if (!result) {
-        return res.status(404).json({ error: "Anime não encontrado" });
-      }
-
-      res.status(204).end(); // Resposta sem conteúdo
-    } catch (error) {
-      console.error("Erro ao remover anime:", error);
-      res.status(500).json({ error: "Erro ao remover anime" });
-    }
-  }
-}
-
-export default new AnimeController();
-```
-
-### Passo 9: Atualizar o servidor para usar as rotas
-
-Atualize o arquivo `src/server.js`:
-
-```javascript
-import express from "express";
-import { config } from "dotenv";
-import animeRoutes from "./routes/animeRoutes.js";
-
-config(); // Carrega variáveis de ambiente do arquivo .env
-const port = process.env.PORT || 3000;
-
-// Inicializa o Express
-const app = express();
-
-app.use(express.json()); // Parse de JSON
-
-// Rota base para verificar se o servidor está rodando
-app.get("/", (req, res) => {
-  res.json({ message: "API de Coleção de Animes funcionando!" });
-});
-
-// Usar as rotas de animes
-app.use("/animes", animeRoutes);
-
-// Tratamento para encerrar o servidor e fechar conexões corretamente
-const server = app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
-});
-```
-
-## Vantagens de Usar o Prisma ORM
-
-A principal diferença entre o projeto original e este com Prisma é:
-
-1. **Persistência de dados**: Os dados não são mais perdidos quando o servidor é reiniciado
-2. **Operações assíncronas reais**: As operações de banco de dados são assíncronas por natureza
-3. **Segurança e validação**: O Prisma ajuda a prevenir injeção de SQL e validar tipos de dados
-4. **Escalabilidade**: O projeto pode agora ser escalado para múltiplas instâncias do servidor
-5. **Migrations**: O Prisma gerencia as alterações no schema do banco de dados
+Neste projeto, seguimos boas práticas como arquitetura MVC, organização de código, armazenamento em memória, tratamento de erros e validação básica de dados.
 
 ## Próximos Passos
 
-Algumas melhorias que você pode adicionar ao projeto:
+- Adicionar autenticação e autorização
+- Implementar paginação e filtros
+- Usar validação avançada com Joi ou Zod
+- Adicionar testes automatizados
+- Documentar a API com Swagger
 
-1. **Relações entre modelos**: Adicionar modelos relacionados como Gêneros, Estúdios, etc.
-2. **Autenticação e autorização**: Implementar JWT para proteger as rotas
-3. **Paginação e filtros**: Melhorar a rota de listagem com opções de paginação e filtros
-4. **Validação avançada**: Usar bibliotecas como Joi ou Zod para validação mais robusta
-5. **Testes automatizados**: Adicionar testes unitários e de integração
-6. **Logging**: Implementar um sistema de log mais robusto
-7. **Documentação da API**: Adicionar Swagger ou similar para documentar a API
-
-Agora você tem uma API REST completa com persistência de dados usando Node.js, Express e Prisma ORM!
-
-```
-
-```
+Agora você tem uma API REST completa para gerenciamento de raças de gatos usando Node.js e Express!
