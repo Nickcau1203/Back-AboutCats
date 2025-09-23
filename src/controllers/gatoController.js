@@ -16,13 +16,10 @@ class GatoController {
   async getGatoById(req, res) {
     try {
       const { id } = req.params;
-
-      const gato = await GatoModel.findById(id);
-
+      const gato = await GatoModel.findByPk(id);
       if (!gato) {
         return res.status(404).json({ error: "Gato não encontrado" });
       }
-
       res.json(gato);
     } catch (error) {
       console.error("Erro ao buscar gato:", error);
@@ -33,15 +30,11 @@ class GatoController {
   // POST /api/gatos
   async createGato(req, res) {
     try {
-      const { raça, diferenças, tempoDeVida } = req.body;
-
-      // Verifica se todos os campos obrigatórios foram fornecidos
-      if (!raça || !diferenças || !tempoDeVida) {
+      const { raca, diferencas, tempoDeVida } = req.body;
+      if (!raca || !diferencas || !tempoDeVida) {
         return res.status(400).json({ error: "Todos os campos são obrigatórios" });
       }
-
-      const newGato = await GatoModel.create(raça, diferenças, tempoDeVida);
-
+      const newGato = await GatoModel.create({ raca, diferencas, tempoDeVida });
       res.status(201).json(newGato);
     } catch (error) {
       console.error("Erro ao criar gato:", error);
@@ -53,15 +46,13 @@ class GatoController {
   async updateGato(req, res) {
     try {
       const { id } = req.params;
-      const { raça, diferenças, tempoDeVida } = req.body;
-
-      const updatedGato = await GatoModel.update(id, raça, diferenças, tempoDeVida);
-
-      if (!updatedGato) {
+      const { raca, diferencas, tempoDeVida } = req.body;
+      const gato = await GatoModel.findByPk(id);
+      if (!gato) {
         return res.status(404).json({ error: "Gato não encontrado" });
       }
-
-      res.json(updatedGato);
+      await gato.update({ raca, diferencas, tempoDeVida });
+      res.json(gato);
     } catch (error) {
       console.error("Erro ao atualizar gato:", error);
       res.status(500).json({ error: "Erro ao atualizar gato" });
@@ -72,14 +63,12 @@ class GatoController {
   async deleteGato(req, res) {
     try {
       const { id } = req.params;
-
-      const result = await GatoModel.delete(id);
-
-      if (!result) {
+      const gato = await GatoModel.findByPk(id);
+      if (!gato) {
         return res.status(404).json({ error: "Gato não encontrado" });
       }
-
-      res.status(204).end(); // Resposta sem conteúdo
+      await gato.destroy();
+      res.status(204).end();
     } catch (error) {
       console.error("Erro ao remover gato:", error);
       res.status(500).json({ error: "Erro ao remover gato" });
