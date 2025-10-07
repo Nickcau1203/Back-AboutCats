@@ -3,13 +3,13 @@ import prisma from "../../prisma/prisma.js";
 class GatoModel {
   // Obter todos os gatos
   async findAll() {
-    const gatos = await prisma.gato.findMany({
+    const gato = await prisma.gato.findMany({
       orderBy: {
         createdAt: "desc",
       },
     });
 
-    return gatos;
+    return gato;
   }
 
   // Obter um gato pelo ID

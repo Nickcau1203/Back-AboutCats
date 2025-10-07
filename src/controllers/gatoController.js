@@ -4,8 +4,8 @@ class GatoController {
   // GET /api/gatos
   async getAllGatos(req, res) {
     try {
-      const gatos = await GatoModel.findAll();
-      res.json(gatos);
+      const gato = await GatoModel.findAll();
+      res.json(gato);
     } catch (error) {
       console.error("Erro ao buscar gatos:", error);
       res.status(500).json({ error: "Erro ao buscar gatos" });
